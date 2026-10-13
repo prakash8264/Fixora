@@ -1,0 +1,20 @@
+import type { BookingStatus, Role } from "./domain";
+import type { Commitment, RequestAvailability, Schedule } from "./scheduling";
+import type { PageInfo, PageList } from "./pagination";
+
+export type Service = { id: string; name: string; category: string; description: string; price: number; icon: string; color: string; active: boolean };
+export type Provider = { id: string; name: string; initials: string; bio: string; services: string[]; areas: string[]; rating: number; jobs: number; status: "pending" | "approved" | "rejected"; suspended: boolean; clockedIn?: boolean; clockChangedAt?: string; rejectionReason?: string; experienceYears?: number };
+export type Address = { id: string; label: string; line: string; city: string; postalCode: string };
+export type Booking = Schedule & { id: string; reference: string; customerId: string; customerName: string; serviceId: string; providerId: string | null; description: string; address: Address; basePrice: number; total: number; paymentRule?: number; status: BookingStatus; payment: "unpaid" | "captured"; createdAt: string };
+export type Invitation = { id: string; bookingId: string; providerId: string; status: "pending" | "accepted" | "declined" | "expired" };
+export type EstimateItem = { description: string; quantity: number; unitPrice: number };
+export type Estimate = { id: string; bookingId: string; providerId: string; version: number; status: "pending" | "approved" | "rejected" | "superseded"; items: EstimateItem[]; total: number; createdAt: string };
+export type Activity = { id: string; bookingId: string; title: string; actor: string; createdAt: string };
+export type Notification = { id: string; recipientId: string; title: string; description: string; bookingId?: string; bookingAccessible?: boolean; read: boolean; createdAt: string };
+export type Review = { id: string; bookingId: string; providerId: string; rating: number; comment: string; createdAt: string };
+export type Payment = { id: string; bookingId: string; amount: number; createdAt: string };
+export type RequestPreview = Schedule & { id: string; reference: string; serviceId: string; city: string; postalCode: string; description: string; basePrice: number; paymentRule?: number; availability: RequestAvailability };
+export type WorkspaceStats = { bookings: number; active: number; upcoming: number; completed: number; reviews: number; collected: number; payments: number; unpaid: number; unread: number; requests: number; pendingProviders: number; approvedProviders: number; busy?: boolean };
+export type WorkspaceData = { version: 1; services: Service[]; providers: Provider[]; addresses: Address[]; bookings: Booking[]; invitations: Invitation[]; estimates: Estimate[]; events: Activity[]; notifications: Notification[]; reviews: Review[]; payments: Payment[]; profile: { name: string; email: string; phone: string }; requests?: RequestPreview[]; reservations?: Commitment[]; accounts?: { id: string; name: string; email: string; role: Role; suspended: boolean }[]; paymentsEnabled?: boolean; webhookEnabled?: boolean; pages?: Partial<Record<PageList,PageInfo>>; stats?: WorkspaceStats };
+export type DemoState = WorkspaceData;
+export type Actor = { id: string; role: Role };

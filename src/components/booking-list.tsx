@@ -1,0 +1,13 @@
+"use client";
+
+import { ChevronRight, CalendarDays } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { ServiceIcon } from "./service-icon";
+import type { Booking, DemoState } from "@/lib/types";
+import { money, statusLabels } from "@/lib/domain";
+import { scheduleLabel } from "@/lib/scheduling";
+
+export function BookingList({ bookings, data, onBooking, compact = false }: { bookings: Booking[]; data: DemoState; onBooking: (booking: Booking) => void; compact?: boolean }) {
+  if (!bookings.length) return <div className="grid min-h-44 place-items-center text-center"><div><CalendarDays className="mx-auto mb-3 text-muted-foreground" size={27} strokeWidth={1.5}/><p className="text-sm font-semibold">No bookings here yet</p><p className="mt-2 text-xs text-muted-foreground">Your service requests will appear here.</p></div></div>;
+  return <Table><TableHeader><TableRow className="border-border/70 hover:bg-transparent"><TableHead className="h-8 text-[9px] font-medium text-muted-foreground">SERVICE</TableHead><TableHead className="text-[9px] font-medium text-muted-foreground">VISIT TIMING</TableHead><TableHead className="text-[9px] font-medium text-muted-foreground">STATUS</TableHead>{!compact && <TableHead className="text-[9px] font-medium text-muted-foreground">AMOUNT</TableHead>}<TableHead className="w-10"><span className="sr-only">Details</span></TableHead></TableRow></TableHeader><TableBody>{bookings.map(b => { const service = data.services.find(s => s.id === b.serviceId); return <TableRow key={b.id} className="border-border/60 hover:bg-white/35"><TableCell className="py-4"><div className="flex items-center gap-3"><ServiceIcon service={service} small/><div><button className="text-left text-[11px] font-semibold hover:text-primary focus-visible:outline-2 focus-visible:outline-ring" onClick={() => onBooking(b)}>{service?.name}</button><p className="mt-1 text-[9px] text-muted-foreground">{b.reference}</p></div></div></TableCell><TableCell className="max-w-48 whitespace-normal text-[10px] leading-relaxed">{scheduleLabel(b)}</TableCell><TableCell><span className={`status-badge status-${b.status}`}><span className="size-1 rounded-full bg-current"/>{statusLabels[b.status]}</span></TableCell>{!compact && <TableCell className="text-[11px] font-semibold tabular-nums">{money(b.total)}</TableCell>}<TableCell><button aria-label={`View booking ${b.reference}`} className="grid size-9 place-items-center rounded-lg hover:bg-muted" onClick={() => onBooking(b)}><ChevronRight size={15}/></button></TableCell></TableRow>; })}</TableBody></Table>;
+}

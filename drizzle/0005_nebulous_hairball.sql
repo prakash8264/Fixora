@@ -1,0 +1,2 @@
+DROP INDEX "one_provider_active_visit";--> statement-breakpoint
+CREATE UNIQUE INDEX "one_provider_active_visit" ON "bookings" USING btree ("provider_id") WHERE "bookings"."provider_id" is not null and ("bookings"."status" in ('on_the_way','inspecting','awaiting_approval','ready_to_start','in_progress') or ("bookings"."schedule_mode" = 'asap' and "bookings"."status" = 'accepted'));
